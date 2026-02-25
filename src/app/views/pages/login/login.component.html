@@ -5,15 +5,34 @@
         <c-card-group>
           <c-card class="p-4">
             <c-card-body>
-              <form cForm>
+              <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" cForm>
                 <h1>Login</h1>
                 <p class="text-body-secondary">Sign In to your account</p>
+
+                <c-alert *ngIf="errorMessage" color="danger" [dismissible]="true" (visibleChange)="errorMessage = ''">
+                  {{ errorMessage }}
+                </c-alert>
+
                 <c-input-group class="mb-3">
                   <span cInputGroupText>
                     <svg cIcon name="cilUser"></svg>
                   </span>
-                  <input autoComplete="username" cFormControl placeholder="Username" />
+                  <input
+                    autoComplete="email"
+                    cFormControl
+                    formControlName="email"
+                    placeholder="Email Address"
+                    type="email"
+                    [valid]="f['email'].touched ? f['email'].valid : undefined"
+                  />
+                  <c-form-feedback *ngIf="f['email'].touched && f['email'].errors?.['required']" [valid]="false">
+                    Email is required
+                  </c-form-feedback>
+                  <c-form-feedback *ngIf="f['email'].touched && f['email'].errors?.['email']" [valid]="false">
+                    Please enter a valid email
+                  </c-form-feedback>
                 </c-input-group>
+
                 <c-input-group class="mb-4">
                   <span cInputGroupText>
                     <svg cIcon name="cilLockLocked"></svg>
@@ -21,18 +40,31 @@
                   <input
                     autoComplete="current-password"
                     cFormControl
+                    formControlName="password"
                     placeholder="Password"
-                    type="password"
+                    [type]="showPassword ? 'text' : 'password'"
+                    [valid]="f['password'].touched ? f['password'].valid : undefined"
                   />
+                  <span cInputGroupText class="cursor-pointer" (click)="togglePassword()" style="cursor: pointer;">
+                    <svg cIcon [name]="showPassword ? 'cilLockUnlocked' : 'cilLockLocked'"></svg>
+                  </span>
+                  <c-form-feedback *ngIf="f['password'].touched && f['password'].errors?.['required']" [valid]="false">
+                    Password is required
+                  </c-form-feedback>
+                  <c-form-feedback *ngIf="f['password'].touched && f['password'].errors?.['minlength']" [valid]="false">
+                    Password must be at least 4 characters
+                  </c-form-feedback>
                 </c-input-group>
+
                 <c-row>
                   <c-col xs="6">
-                    <button cButton class="px-4" color="primary">
-                      Login
+                    <button cButton class="px-4" color="primary" type="submit" [disabled]="loginForm.invalid || isLoading">
+                      <c-spinner *ngIf="isLoading" size="sm" class="me-2"></c-spinner>
+                      {{ isLoading ? 'Signing In...' : 'Login' }}
                     </button>
                   </c-col>
                   <c-col class="text-end" xs="6">
-                    <button cButton class="px-0" color="link">
+                    <button cButton class="px-0" color="link" type="button">
                       Forgot password?
                     </button>
                   </c-col>
@@ -41,12 +73,11 @@
             </c-card-body>
           </c-card>
           <c-card [style.minWidth.%]="44" class="text-white bg-primary py-5">
-            <c-card-body class="text-center">
+            <c-card-body class="text-center d-flex flex-column justify-content-center">
               <div>
                 <h2>Sign up</h2>
                 <p>
-                  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                  tempor incididunt ut labore et dolore magna aliqua.
+                  Create your account to access the admin dashboard with all features and tools.
                 </p>
                 <button [active]="true" cButton class="mt-3" color="primary" routerLink="/register">
                   Register Now!
