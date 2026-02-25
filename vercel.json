@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npm run build",
+  "buildCommand": "npx ng build",
   "outputDirectory": "dist/coreui-free-angular-admin-template/browser",
   "installCommand": "npm install",
   "framework": null,
